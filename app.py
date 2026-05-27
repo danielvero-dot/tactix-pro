@@ -9,7 +9,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Injeksi CSS Total: Roboto Condensed, Paksa PUTIH MUTLAK untuk SEMUA isi tombol
+# Injeksi CSS Total: Roboto Condensed, Angka Metrik Raksasa 48px Oranye, Urutan Urgensi Fix
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
@@ -62,23 +62,23 @@ st.markdown("""
         text-transform: uppercase;
     }
     
-    /* 4. WIDGET METRIK: KOTAK PUTIH, BORDER ORANYE BALAP */
+    /* 4. WIDGET METRIK: KOTAK PUTIH, BORDER NAVY, ANGKA RAKSASA ORANYE PEKAT */
     div[data-testid="stMetric"] {
         background-color: #ffffff !important;
-        border: 3px solid #f97316 !important;
+        border: 3px solid #1e3a8a !important;
         padding: 15px;
         border-radius: 12px;
         text-align: center;
     }
     div[data-testid="stMetricLabel"] { 
         color: #1e293b !important; 
-        font-size: 15px !important; 
+        font-size: 16px !important; 
         font-weight: 700 !important; 
         text-transform: uppercase;
     }
     div[data-testid="stMetricValue"] { 
-        color: #1e3a8a !important; 
-        font-size: 38px !important; 
+        color: #f97316 !important; /* Ganti jadi Oranye Balap Menyala */
+        font-size: 48px !important; /* Ukuran Raksasa Mencolok */
         font-weight: 700 !important; 
     }
     
@@ -318,7 +318,7 @@ elif menu_aktif == "3. Live Match & Subs":
                     st.session_state.timer_status = "PAUSED"
                     st.rerun()
 
-        # LIVE DASHBOARD METRICS
+        # LIVE DASHBOARD METRICS (SEKARANG KONTRAST RAKSASA 48PX ORANYE)
         st.write("")
         col_m1, col_m2, col_m3 = st.columns(3)
         with col_m1: st.metric("Match Minute", f"{current_elapsed:.1f}")
@@ -379,13 +379,13 @@ elif menu_aktif == "3. Live Match & Subs":
                     st.rerun()
                 else: st.error("🚨 Substitution mismatch!")
 
-# SCREEN 4: MINUTE TRACKER DENGAN INTEGRATED DOUBLE SORTING ALGORITHM
+# SCREEN 4: MINUTE TRACKER DENGAN LOCK FIX ABSOLUTE TOP UNTUK LOW TIME
 elif menu_aktif == "4. Stats Tracker":
     st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>📊 Screen 4: Player Minutes Tracker & Logs</h3>", unsafe_allow_html=True)
     
     st.info(f"⏱️ **Match Progress:** Min {current_elapsed:.1f} / Alert Window Every {float(interval_ideal):.1f} Mins.")
     st.write("")
-    st.markdown("**📉 Smart Player Minutes Breakdown (Prioritized Urutan):**")
+    st.markdown("**📉 Smart Player Minutes Breakdown (Low Time Locked on TOP):**")
     
     outfield_players = [p for p in st.session_state.pemain_hadir if p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper]
     if outfield_players:
@@ -393,7 +393,7 @@ elif menu_aktif == "4. Stats Tracker":
     else:
         rata_menit_skuad = 0.0
 
-    # --- LOGIKA SORTING PINTAR BARU ---
+    # PENGURUTAN ULANG MUTLAK
     list_low_time = []
     list_normal_time = []
 
@@ -406,16 +406,16 @@ elif menu_aktif == "4. Stats Tracker":
         else:
             list_normal_time.append((p, menit_sekarang, False))
 
-    # Kelompok 1 (Low Time): Diurutkan dari yang menitnya paling kecil/sedikit ke besar
+    # KUNCI 1: Low Time diurut dari paling kecil/kritis menit bermainnya
     list_low_time.sort(key=lambda x: x[1])
     
-    # Kelompok 2 (Normal): Diurutkan dari yang paling lama bermain (menit besar) ke kecil
+    # KUNCI 2: Sisa skuad normal diurut dari yang paling kenyang bermain (paling lama) ke kecil
     list_normal_time.sort(key=lambda x: x[1], reverse=True)
 
-    # Gabung total daftar: Kelompok Low Time mutlak nangkring di paling atas!
+    # GABUNGAN MUTLAK: Low time WAJIB nangkring paling atas
     daftar_final_urut = list_low_time + list_normal_time
 
-    # Render Hasil Sorting ke HP Lu
+    # Render List
     for p, menit_sekarang, is_low_time in daftar_final_urut:
         persentase_main = min(menit_sekarang / total_menit, 1.0)
         status_badge = "🧤 GK" if p == st.session_state.kiper_terpilih else ("🟢 Active" if p in st.session_state.pemain_di_lapangan else "🔴 Bench")
