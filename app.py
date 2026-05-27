@@ -98,10 +98,10 @@ st.sidebar.markdown("### ⚙️ MATCH SETTINGS")
 total_menit = st.sidebar.number_input("Total Match Duration (Mins)", min_value=1, value=50, step=5)
 format_game = st.sidebar.number_input("Match Format (Players on Field)", min_value=1, value=9, step=1)
 
-# Kunci rotasi fixed 10 menit default
+# Kunci rotasi fixed 10 menit total
 interval_ideal = st.sidebar.number_input("Rotation Alert Every (Mins)", min_value=1, value=10, step=1)
 
-# Rumus Matematika Durasi
+# Rumus Est Menit Main/Anak
 total_hadir = len(st.session_state.pemain_hadir)
 if st.session_state.kiper_terpilih != "-- Select Goalkeeper --":
     semua_kiper = [st.session_state.kiper_terpilih] + st.session_state.riwayat_kiper
@@ -214,12 +214,12 @@ elif menu_aktif == "3. Live Match & Subs":
                     st.session_state.timer_status = "PAUSED"
                     st.rerun()
 
-        # LIVE DASHBOARD METRICS
+        # LIVE DASHBOARD METRICS (DI SINI UDAH FIXED)
         st.write("")
         col_m1, col_m2, col_m3 = st.columns(3)
         with col_m1: st.metric("CURRENT MATCH MINUTE", f"Min {current_elapsed:.1f}")
         with col_m2: st.metric("EST. TARGET MINS / PLAYER", f"{menit_per_pemain:.1f} Mins")
-        with col_m3: st.metric("FIXED ROTATION ALERT EVERY", f"{interval_ideal:.1f} Mins")
+        with col_m3: st.metric("FIXED ROTATION ALERT EVERY", f"{float(interval_ideal):.1f} Mins")
 
         # --- SMART FIXED ROTATION ALERT ---
         if current_elapsed > 0:
@@ -279,7 +279,6 @@ elif menu_aktif == "3. Live Match & Subs":
         st.write("---")
         st.markdown("**📊 Live Player Minutes Tracker**")
         
-        # Hitung rata-rata menit bermain skuad (di luar kiper utama) sebagai benchmark keadilan
         outfield_players = [p for p in st.session_state.pemain_hadir if p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper]
         if outfield_players:
             rata_menit_skuad = sum(st.session_state.menit_bermain[p] for p in outfield_players) / len(outfield_players)
@@ -291,14 +290,11 @@ elif menu_aktif == "3. Live Match & Subs":
             persentase_main = min(menit_sekarang / total_menit, 1.0)
             status_badge = "🧤 GK" if p == st.session_state.kiper_terpilih else ("🟢 Active" if p in st.session_state.pemain_di_lapangan else "🔴 Bench")
             
-            # LOGIKA DETEKSI HIGHLIGHT: 
-            # Jika dia pemain lapangan DAN menit mainnya di bawah rata-rata tim saat game sudah jalan
             is_low_time = p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper and menit_sekarang < rata_menit_skuad and current_elapsed > 5.0
             
             box_class = "low-time-box" if is_low_time else "normal-time-box"
             alert_badge = " <span style='background-color:#ef4444; color:white; padding:2px 6px; font-size:10px; font-weight:700; border-radius:4px; margin-left:5px;'>⚠️ LOW TIME</span>" if is_low_time else ""
             
-            # Tampilkan barisan list dengan injeksi HTML kotak highlight
             st.markdown(f"<div class='{box_class}'>", unsafe_allow_html=True)
             col_pname, col_pbar = st.columns([1.2, 3])
             with col_pname:
