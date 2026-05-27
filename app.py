@@ -2,53 +2,55 @@ import streamlit as st
 import time
 from streamlit_autorefresh import st_autorefresh
 
-# 1. SET CONFIG & OUTDOOR PREMIUM THEME
+# 1. SET CONFIG & HIGH-CONTRAST OUTDOOR THEME
 st.set_page_config(
-    page_title="Tactix Pro - Premium Matchday", 
+    page_title="Tactix Pro - Premium Outdoor", 
     layout="wide", 
     initial_sidebar_state="collapsed"
 )
 
-# Injeksi CSS Premium Matchday: Roboto Condensed, Navy Solid & Racing Orange Border
+# Injeksi CSS Total: Roboto Condensed, Navigasi Navy-Putih, Teks Putih Mutlak di Area Gelap
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
     
-    /* Paksa Background Putih Bersih & Teks Dasar Hitam Pekat */
-    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+    /* 1. PAKSA BACKGROUND APLIKASI PUTIH BERSIH GLOBAL */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"], [data-testid="stMainBlockContainer"] {
         background-color: #ffffff !important;
         color: #000000 !important;
         font-family: 'Roboto Condensed', sans-serif !important;
     }
     
-    /* PREMIUM APP HEADER (PERSIS KAYAK DI GAMBAR) */
+    /* 2. DESIGN HEADER PREMIUM (PUTIH BERSIH - AKSEN NAVY ORANGE KONTRAS TEGAS) */
     .premium-header {
-        background: linear-gradient(180deg, #0f172a 0%, #1e3a8a 100%);
-        padding: 20px;
-        border-radius: 0px 0px 16px 16px;
+        background-color: #ffffff !important;
+        padding: 15px 10px;
+        border-radius: 12px;
         text-align: center;
-        margin-top: -60px;
-        margin-bottom: 20px;
-        border-bottom: 4px solid #f97316;
+        margin-top: -50px;
+        margin-bottom: 25px;
+        border: 3px solid #1e3a8a !important;
+        border-bottom: 6px solid #f97316 !important;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.05);
     }
     .premium-title {
-        color: #ffffff !important;
-        font-size: 32px !important;
+        color: #1e3a8a !important;
+        font-size: 34px !important;
         font-weight: 700 !important;
-        letter-spacing: 1px;
+        letter-spacing: 1.5px;
         margin: 0px !important;
         text-transform: uppercase;
     }
     .premium-subtitle {
-        color: #94a3b8 !important;
+        color: #f97316 !important;
         font-size: 14px !important;
-        font-weight: 400 !important;
+        font-weight: 700 !important;
         margin: 2px 0px 0px 0px !important;
         letter-spacing: 2px;
         text-transform: uppercase;
     }
     
-    /* NAVIGASI TAB: MATANGKAN KONTRAS JADI NAVY TEKS PUTIH */
+    /* 3. NAVIGASI TAB ATAS: NAVY BLUE SOLID, TEKS PUTIH TEBAL */
     div[data-testid="stHorizontalBlock"] button {
         background-color: #1e3a8a !important;
         color: #ffffff !important;
@@ -59,12 +61,8 @@ st.markdown("""
         border-radius: 10px !important;
         text-transform: uppercase;
     }
-    div[data-testid="stHorizontalBlock"] button:hover {
-        background-color: #f97316 !important;
-        color: #ffffff !important;
-    }
     
-    /* METRIK DENGAN BORDER ORANYE TEBAL (PERSIS DI GAMBAR LU) */
+    /* 4. WIDGET METRIK: KOTAK PUTIH, BORDER ORANYE BALAP */
     div[data-testid="stMetric"] {
         background-color: #ffffff !important;
         border: 3px solid #f97316 !important;
@@ -74,19 +72,19 @@ st.markdown("""
     }
     div[data-testid="stMetricLabel"] { 
         color: #1e293b !important; 
-        font-size: 14px !important; 
+        font-size: 15px !important; 
         font-weight: 700 !important; 
         text-transform: uppercase;
     }
     div[data-testid="stMetricValue"] { 
-        color: #0f172a !important; 
+        color: #1e3a8a !important; 
         font-size: 38px !important; 
         font-weight: 700 !important; 
     }
     
-    /* TOMBOL UTAMA KONTROL: BIRU NAVY SOLID TEKS PUTIH TEBAL */
+    /* 5. TOMBOL KONTROL UTAMA: NAVY BLUE, TEKS PUTIH */
     div.stButton > button {
-        background: #1e3a8a !important;
+        background-color: #1e3a8a !important;
         color: #ffffff !important; 
         border: 2px solid #0f172a !important;
         padding: 16px 24px !important;
@@ -97,17 +95,17 @@ st.markdown("""
         text-transform: uppercase;
     }
     
-    /* MEMPERBAIKI TEKS MULTISELECT / FORM AGAR HITAM PEKAT */
-    label, p, span {
+    /* 6. SETELAN TEKS FORM BAWAAN AGAR HITAM PEKAT */
+    label, p {
         color: #000000 !important;
         font-weight: 700 !important;
         font-size: 16px !important;
     }
     
-    /* SQUAD STATUS BOX (NAVY SEPERTI DI GAMBAR, TEKS WAJIB PUTIH!) */
+    /* 7. KOTAK SQUAD LIVE (NAVY & DARK SLATE, TEKS WAJIB PUTIH MUTLAK!) */
     .field-status-box {
         background-color: #1e3a8a !important;
-        border-bottom: 4px solid #16a34a !important;
+        border-bottom: 5px solid #16a34a !important;
         padding: 16px;
         border-radius: 12px;
         margin-bottom: 12px;
@@ -115,14 +113,20 @@ st.markdown("""
     }
     .bench-status-box {
         background-color: #0f172a !important;
-        border-bottom: 4px solid #f97316 !important;
+        border-bottom: 5px solid #f97316 !important;
         padding: 16px;
         border-radius: 12px;
         margin-bottom: 18px;
         text-align: center;
     }
     
-    /* LIST MONITOR JALUR TRACKER (LOW TIME & NORMAL) */
+    /* Paksa teks nama starter/cadangan di dalam kotak ini berwarna putih pekat */
+    .field-status-box span, .field-status-box p, .bench-status-box span, .bench-status-box p {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
+    
+    /* 8. MONITOR LIST TRACKER MINUT (SCREEN 4) */
     .low-time-box {
         background-color: #fef2f2 !important; 
         border: 4px solid #dc2626 !important; 
@@ -140,7 +144,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- PREMIUM HEADER SECTION ---
+# --- PREMIUM OUTDOOR HEADER ---
 st.markdown("""
     <div class='premium-header'>
         <h1 class='premium-title'>⏱️ TACTIX PRO</h1>
@@ -214,7 +218,7 @@ if st.session_state.timer_status == "RUNNING":
 else:
     current_elapsed = st.session_state.elapsed_minutes
 
-# --- 5. INTERFACE NAVIGASI ---
+# --- 5. INTERFACE NAVIGASI (4 SCREENS) ---
 menu_aktif = st.radio(
     "Navigation", 
     ["1. Attendance", "2. Set GK & Lineup", "3. Live Match & Subs", "4. Stats Tracker"], 
@@ -302,7 +306,7 @@ elif menu_aktif == "3. Live Match & Subs":
                     st.session_state.timer_status = "PAUSED"
                     st.rerun()
 
-        # LIVE DASHBOARD METRICS (ORANGE BORDER, BIG TEXT)
+        # LIVE DASHBOARD METRICS
         st.write("")
         col_m1, col_m2, col_m3 = st.columns(3)
         with col_m1: st.metric("Match Minute", f"{current_elapsed:.1f}")
@@ -331,15 +335,15 @@ elif menu_aktif == "3. Live Match & Subs":
 
         pemain_di_cadangan = [p for p in st.session_state.pemain_hadir if p not in st.session_state.pemain_di_lapangan]
 
-        # Squad Status Box UI (TEKS PUTIH MUTLAK BIAR JELAS DI OUTDOOR)
+        # SQUAD STATUS BOX (KUNCI KEDUA WARNA TEKS JADI PUTIH BERSIH)
         st.markdown(f"""
             <div class='field-status-box'>
-                <span style='color: #4ade80 !important; font-weight: bold; font-size: 15px;'>🟢 ON THE FIELD ({len(st.session_state.pemain_di_lapangan)})</span><br>
-                <span style='font-size: 20px; font-weight: 700; color: #ffffff !important;'>{", ".join(st.session_state.pemain_di_lapangan)}</span>
+                <p style='color: #4ade80 !important; font-size: 15px; margin:0px; font-weight:700;'>🟢 ON THE FIELD ({len(st.session_state.pemain_di_lapangan)})</p>
+                <p style='font-size: 20px; font-weight: 700; color: #ffffff !important; margin:5px 0px 0px 0px;'>{", ".join(st.session_state.pemain_di_lapangan)}</p>
             </div>
             <div class='bench-status-box'>
-                <span style='color: #f97316 !important; font-weight: bold; font-size: 15px;'>🔴 ON THE BENCH ({len(pemain_di_cadangan)})</span><br>
-                <span style='font-size: 20px; font-weight: 700; color: #ffffff !important;'>{", ".join(pemain_di_cadangan) if pemain_di_cadangan else "None"}</span>
+                <p style='color: #f97316 !important; font-size: 15px; margin:0px; font-weight:700;'>🔴 ON THE BENCH ({len(pemain_di_cadangan)})</p>
+                <p style='font-size: 20px; font-weight: 700; color: #ffffff !important; margin:5px 0px 0px 0px;'>{", ".join(pemain_di_cadangan) if pemain_di_cadangan else "None"}</p>
             </div>
         """, unsafe_allow_html=True)
 
@@ -369,7 +373,7 @@ elif menu_aktif == "4. Stats Tracker":
     
     st.info(f"⏱️ **Match Progress:** Min {current_elapsed:.1f} / Alert Window Every {float(interval_ideal):.1f} Mins.")
     st.write("")
-    st.markdown("**📉 Live Player Minutes Breakdown (Roboto Condensed - High Contrast):**")
+    st.markdown("**📉 Live Player Minutes Breakdown (High Contrast):**")
     
     outfield_players = [p for p in st.session_state.pemain_hadir if p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper]
     if outfield_players:
@@ -395,7 +399,7 @@ elif menu_aktif == "4. Stats Tracker":
             st.progress(persentase_main, text=f"{menit_sekarang:.1f}m / target {menit_per_pemain:.1f}m")
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # MATCH HISTORY LOG (NAVY BORDER + TEKS HITAM JELAS)
+    # MATCH HISTORY LOG
     if st.session_state.log_pergantian:
         st.write("---")
         st.markdown("**📝 Match Timeline & Logs**")
