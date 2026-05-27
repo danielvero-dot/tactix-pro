@@ -9,7 +9,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Injeksi CSS Total: Roboto Condensed, Angka Metrik Raksasa 48px Oranye, Urutan Urgensi Fix
+# Injeksi CSS Total: Roboto Condensed, Paksa Angka Metrik Raksasa, Urutan Urgensi Fix
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
@@ -62,7 +62,7 @@ st.markdown("""
         text-transform: uppercase;
     }
     
-    /* 4. WIDGET METRIK: KOTAK PUTIH, BORDER NAVY, ANGKA RAKSASA ORANYE PEKAT */
+    /* 4. WIDGET METRIK: PAKSA ANGKA RAKSASA TEMBUS SHADOW DOM */
     div[data-testid="stMetric"] {
         background-color: #ffffff !important;
         border: 3px solid #1e3a8a !important;
@@ -70,16 +70,18 @@ st.markdown("""
         border-radius: 12px;
         text-align: center;
     }
-    div[data-testid="stMetricLabel"] { 
+    div[data-testid="stMetricLabel"] p { 
         color: #1e293b !important; 
-        font-size: 16px !important; 
+        font-size: 18px !important; 
         font-weight: 700 !important; 
-        text-transform: uppercase;
+        text-transform: uppercase !important;
     }
-    div[data-testid="stMetricValue"] { 
-        color: #f97316 !important; /* Ganti jadi Oranye Balap Menyala */
-        font-size: 48px !important; /* Ukuran Raksasa Mencolok */
+    /* Trik khusus menjebol font value Streamlit */
+    div[data-testid="stMetricValue"], div[data-testid="stMetricValue"] > div, div[data-testid="stMetricValue"] span { 
+        color: #f97316 !important; 
+        font-size: 54px !important; /* Dongkrak gila-gilaan ke 54px */
         font-weight: 700 !important; 
+        line-height: 1.1 !important;
     }
     
     /* 5. KUNCI TOTAL SEMUA TOMBOL: BACKGROUND NAVY, TEKS WAJIB PUTIH MUTLAK */
@@ -104,18 +106,15 @@ st.markdown("""
         background-color: #f97316 !important;
         border-color: #f97316 !important;
     }
-    div.stButton > button:hover * {
-        color: #ffffff !important;
-    }
     
-    /* 6. SETELAN TEKS FORM BAWAAN (LABEL / DESKRIPSI) AGAR HITAM PEKAT */
+    /* 6. SETELAN TEKS FORM BAWAAN AGAR HITAM PEKAT */
     label, p {
         color: #000000 !important;
         font-weight: 700 !important;
         font-size: 16px !important;
     }
     
-    /* 7. KOTAK SQUAD LIVE DI HALAMAN 3 (NAVY & DARK SLATE, TEKS PUTIH MUTLAK) */
+    /* 7. KOTAK SQUAD LIVE DI HALAMAN 3 */
     .field-status-box {
         background-color: #1e3a8a !important;
         border-bottom: 5px solid #16a34a !important;
@@ -318,7 +317,7 @@ elif menu_aktif == "3. Live Match & Subs":
                     st.session_state.timer_status = "PAUSED"
                     st.rerun()
 
-        # LIVE DASHBOARD METRICS (SEKARANG KONTRAST RAKSASA 48PX ORANYE)
+        # LIVE DASHBOARD METRICS
         st.write("")
         col_m1, col_m2, col_m3 = st.columns(3)
         with col_m1: st.metric("Match Minute", f"{current_elapsed:.1f}")
@@ -379,7 +378,7 @@ elif menu_aktif == "3. Live Match & Subs":
                     st.rerun()
                 else: st.error("🚨 Substitution mismatch!")
 
-# SCREEN 4: MINUTE TRACKER DENGAN LOCK FIX ABSOLUTE TOP UNTUK LOW TIME
+# SCREEN 4: MINUTE TRACKER DENGAN FIXED ABSOLUTE TOP UNTUK LOW TIME
 elif menu_aktif == "4. Stats Tracker":
     st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>📊 Screen 4: Player Minutes Tracker & Logs</h3>", unsafe_allow_html=True)
     
@@ -393,26 +392,27 @@ elif menu_aktif == "4. Stats Tracker":
     else:
         rata_menit_skuad = 0.0
 
-    # PENGURUTAN ULANG MUTLAK
+    # PENGURUTAN ULANG MUTLAK KELOMPOK
     list_low_time = []
     list_normal_time = []
 
     for p in st.session_state.pemain_hadir:
         menit_sekarang = st.session_state.menit_bermain[p]
-        is_low = p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper and menit_sekarang < rata_menit_skuad and current_elapsed > 5.0
+        # HAPUS ATURAN > 5.0 MINS BIAR GAK ACAK PAS AWAL MATCH KICKOFF!
+        is_low = p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper and menit_sekarang < rata_menit_skuad
         
         if is_low:
             list_low_time.append((p, menit_sekarang, True))
         else:
             list_normal_time.append((p, menit_sekarang, False))
 
-    # KUNCI 1: Low Time diurut dari paling kecil/kritis menit bermainnya
+    # KUNCI URUTAN: Low Time diurut dari paling kecil menit bermainnya
     list_low_time.sort(key=lambda x: x[1])
     
-    # KUNCI 2: Sisa skuad normal diurut dari yang paling kenyang bermain (paling lama) ke kecil
+    # Sisa skuad normal diurut dari yang paling kenyang bermain ke kecil
     list_normal_time.sort(key=lambda x: x[1], reverse=True)
 
-    # GABUNGAN MUTLAK: Low time WAJIB nangkring paling atas
+    # GABUNGAN AKHIR MUTLAK: Low time nangkring nomor satu paling atas
     daftar_final_urut = list_low_time + list_normal_time
 
     # Render List
