@@ -9,7 +9,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Injeksi CSS Total: Roboto Condensed, Paksa PUTIH MUTLAK untuk SEMUA isi tombol (* selector)
+# Injeksi CSS Total: Roboto Condensed, Paksa PUTIH MUTLAK untuk SEMUA isi tombol
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
@@ -82,7 +82,7 @@ st.markdown("""
         font-weight: 700 !important; 
     }
     
-    /* 5. KUNCI TOTAL SEMUA TOMBOL: BACKGROUND NAVY, JALUR "*" MEMAKSA APAPUN DI DALAMNYA JADI PUTIH */
+    /* 5. KUNCI TOTAL SEMUA TOMBOL: BACKGROUND NAVY, TEKS WAJIB PUTIH MUTLAK */
     div.stButton > button {
         background-color: #1e3a8a !important;
         color: #ffffff !important; 
@@ -95,10 +95,9 @@ st.markdown("""
         text-transform: uppercase;
     }
     
-    /* JURUS PAMUNGKAS: Paksa semua elemen anak button (teks, simbol +, emoji) jadi putih mutlak */
+    /* Paksa semua elemen teks di dalam button berwarna putih pekat */
     div.stButton > button * {
         color: #ffffff !important;
-        -webkit-text-fill-color: #ffffff !important; /* Paksa browser mobile untuk tidak menimpa warna emoji */
         font-weight: 700 !important;
     }
     
@@ -109,7 +108,6 @@ st.markdown("""
     }
     div.stButton > button:hover * {
         color: #ffffff !important;
-        -webkit-text-fill-color: #ffffff !important;
     }
     
     /* 6. SETELAN TEKS FORM BAWAAN (LABEL / DESKRIPSI) AGAR HITAM PEKAT */
@@ -255,7 +253,7 @@ if menu_aktif == "1. Attendance":
     st.session_state.pemain_hadir = temp_hadir
     st.info(f"🟢 Total players present: {len(st.session_state.pemain_hadir)} players.")
 
-# SCREEN 2: SET GK & STARTER
+# SCREEN 2: SET GK & STARTER (TANDA PLUS DIHAPUS TOTAL)
 elif menu_aktif == "2. Set GK & Lineup":
     st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>🧤 Screen 2: Goalkeeper & Starting Lineup Setup</h3>", unsafe_allow_html=True)
     if total_hadir < format_game:
@@ -279,7 +277,8 @@ elif menu_aktif == "2. Set GK & Lineup":
             target_col = col_btn1 if i % 3 == 0 else (col_btn2 if i % 3 == 1 else col_btn3)
             with target_col:
                 is_starter = p in st.session_state.pemain_di_lapangan
-                label_tombol = f"💪 {p} (STARTER)" if is_starter else f"➕ {p}"
+                # Gak pake tanda + lagi, teks bersih anti bug hitam
+                label_tombol = f"💪 {p} (STARTER)" if is_starter else f"{p}"
                 if st.button(label_tombol, key=f"btn_choose_{p}"):
                     if is_starter: st.session_state.pemain_di_lapangan.remove(p)
                     else: st.session_state.pemain_di_lapangan.append(p)
