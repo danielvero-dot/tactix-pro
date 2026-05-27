@@ -9,7 +9,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Injeksi CSS Total: Roboto Condensed, Navigasi Navy-Putih, Paksa Semua Elemen di Dalam Tombol Berwarna Putih
+# Injeksi CSS Total: Roboto Condensed, Paksa PUTIH MUTLAK untuk SEMUA isi tombol (* selector)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
@@ -82,7 +82,7 @@ st.markdown("""
         font-weight: 700 !important; 
     }
     
-    /* 5. KUNCI TOTAL SEMUA TOMBOL: BACKGROUND NAVY, SEMUA KARAKTER DI DALAMNYA WAJIB PUTIH MUTLAK! */
+    /* 5. KUNCI TOTAL SEMUA TOMBOL: BACKGROUND NAVY, JALUR "*" MEMAKSA APAPUN DI DALAMNYA JADI PUTIH */
     div.stButton > button {
         background-color: #1e3a8a !important;
         color: #ffffff !important; 
@@ -95,12 +95,10 @@ st.markdown("""
         text-transform: uppercase;
     }
     
-    /* Sikat habis semua bug teks hitam termasuk tanda +, emoji, dan string di dalam button */
-    div.stButton > button p, 
-    div.stButton > button span, 
-    div.stButton > button data,
-    div.stButton > button div {
+    /* JURUS PAMUNGKAS: Paksa semua elemen anak button (teks, simbol +, emoji) jadi putih mutlak */
+    div.stButton > button * {
         color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important; /* Paksa browser mobile untuk tidak menimpa warna emoji */
         font-weight: 700 !important;
     }
     
@@ -109,8 +107,9 @@ st.markdown("""
         background-color: #f97316 !important;
         border-color: #f97316 !important;
     }
-    div.stButton > button:hover p, div.stButton > button:hover span {
+    div.stButton > button:hover * {
         color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
     }
     
     /* 6. SETELAN TEKS FORM BAWAAN (LABEL / DESKRIPSI) AGAR HITAM PEKAT */
@@ -256,7 +255,7 @@ if menu_aktif == "1. Attendance":
     st.session_state.pemain_hadir = temp_hadir
     st.info(f"🟢 Total players present: {len(st.session_state.pemain_hadir)} players.")
 
-# SCREEN 2: SET GK & STARTER (TANDA PENGHUBUNG & SIMBOL FIX PUTIH)
+# SCREEN 2: SET GK & STARTER
 elif menu_aktif == "2. Set GK & Lineup":
     st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>🧤 Screen 2: Goalkeeper & Starting Lineup Setup</h3>", unsafe_allow_html=True)
     if total_hadir < format_game:
