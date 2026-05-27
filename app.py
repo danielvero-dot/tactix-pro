@@ -2,63 +2,103 @@ import streamlit as st
 import time
 from streamlit_autorefresh import st_autorefresh
 
-# 1. SET CONFIG & PREMIUM THEME
+# 1. SET CONFIG & HIGH-CONTRAST OUTDOOR THEME
 st.set_page_config(
-    page_title="Tactix Pro - Smart Highlight", 
+    page_title="Tactix Pro - Outdoor Edition", 
     layout="wide", 
     initial_sidebar_state="collapsed"
 )
 
-# Premium Mobile-Friendly CSS Injection
+# Injeksi CSS Khusus High-Contrast Light Mode untuk Outdoor
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght=400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;700&display=swap');
     
-    html, body, [data-testid="stAppViewContainer"] {
-        font-family: 'Inter', sans-serif;
-        background-color: #0f172a;
-        color: #f8fafc;
+    /* Paksa Background Putih Bersih & Teks Hitam Pekat */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
     }
     
-    /* Top Navigation Tabs */
+    /* Navigasi Atas: Gede, Hitam Kontras Tinggi */
     div[data-testid="stHorizontalBlock"] button {
-        background-color: #1e293b !important;
-        color: #cbd5e1 !important;
-        border: 1px solid #334155 !important;
-        padding: 12px !important;
-        font-weight: 600 !important;
+        background-color: #f1f5f9 !important;
+        color: #000000 !important;
+        border: 2px solid #000000 !important;
+        padding: 12px 5px !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
         border-radius: 10px !important;
     }
     
-    /* iOS Style Widget Metrics */
+    /* Widget Metrik: Kotak Terang Border Hitam Lembut */
     div[data-testid="stMetric"] {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        border: 1px solid #334155;
+        background-color: #f8fafc !important;
+        border: 2px solid #cbd5e1 !important;
         padding: 15px;
         border-radius: 14px;
     }
-    div[data-testid="stMetricLabel"] { color: #94a3b8 !important; font-size: 13px !important; font-weight: 600; }
-    div[data-testid="stMetricValue"] { color: #38bdf8 !important; font-size: 28px !important; font-weight: 700; }
-    
-    /* Primary Action Buttons */
-    div.stButton > button {
-        background: linear-gradient(90deg, #0284c7 0%, #0369a1 100%) !important;
-        color: white !important; border: none !important; padding: 12px 24px !important;
-        font-weight: 700 !important; border-radius: 12px !important; width: 100% !important;
+    div[data-testid="stMetricLabel"] { 
+        color: #475569 !important; 
+        font-size: 14px !important; 
+        font-weight: 700 !important; 
+    }
+    div[data-testid="stMetricValue"] { 
+        color: #0284c7 !important; 
+        font-size: 32px !important; 
+        font-weight: 700 !important; 
     }
     
-    /* Custom Red Highlight Dynamic Box */
+    /* Tombol Utama: Biru Pekat Teks Putih Bold */
+    div.stButton > button {
+        background: #0284c7 !important;
+        color: #ffffff !important; 
+        border: 2px solid #0369a1 !important;
+        padding: 14px 24px !important;
+        font-size: 16px !important;
+        font-weight: 700 !important; 
+        border-radius: 12px !important; 
+        width: 100% !important;
+    }
+    
+    /* Dropdown Multiselect & Checkbox Teks Hitam Gede */
+    label, p, span {
+        color: #000000 !important;
+        font-weight: 600 !important;
+        font-size: 15px !important;
+    }
+    
+    /* Kotak Highlight Low Time: Merah Kontras Tinggi */
     .low-time-box {
-        background-color: #451a03; 
-        border-left: 5px solid #ef4444; 
-        padding: 10px; 
-        border-radius: 8px; 
-        margin-bottom: 8px;
+        background-color: #fef2f2 !important; 
+        border: 3px solid #ef4444 !important; 
+        padding: 12px; 
+        border-radius: 10px; 
+        margin-bottom: 10px;
     }
     .normal-time-box {
-        background-color: transparent;
-        padding: 10px;
-        margin-bottom: 8px;
+        background-color: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+    
+    /* Status Box Lapangan vs Cadangan */
+    .field-status-box {
+        background-color: #f0fdf4 !important;
+        border: 2px solid #16a34a !important;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+    .bench-status-box {
+        background-color: #fcfcfc !important;
+        border: 2px solid #dc2626 !important;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 15px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -97,8 +137,6 @@ if 'last_calculated_minute' not in st.session_state:
 st.sidebar.markdown("### ⚙️ MATCH SETTINGS")
 total_menit = st.sidebar.number_input("Total Match Duration (Mins)", min_value=1, value=50, step=5)
 format_game = st.sidebar.number_input("Match Format (Players on Field)", min_value=1, value=9, step=1)
-
-# Kunci rotasi fixed 10 menit total
 interval_ideal = st.sidebar.number_input("Rotation Alert Every (Mins)", min_value=1, value=10, step=1)
 
 # Rumus Est Menit Main/Anak
@@ -131,14 +169,19 @@ if st.session_state.timer_status == "RUNNING":
 else:
     current_elapsed = st.session_state.elapsed_minutes
 
-# --- 5. INTERFACE NAVIGASI ---
-st.markdown("<h2 style='text-align: center; color: #f8fafc; font-size: 22px; margin-bottom: 5px;'>📋 TACTIX PRO</h2>", unsafe_allow_html=True)
-menu_aktif = st.radio("Navigation", ["1. Attendance Check", "2. Set GK & Starter", "3. Live Match & Subs"], horizontal=True, label_visibility="collapsed")
+# --- 5. INTERFACE NAVIGASI (4 SCREENS OUTDOOR OPTIMIZED) ---
+st.markdown("<h2 style='text-align: center; color: #000000; font-size: 24px; font-weight:700; margin-bottom: 5px;'>📋 TACTIX PRO</h2>", unsafe_allow_html=True)
+menu_aktif = st.radio(
+    "Navigation", 
+    ["1. Attendance", "2. Set GK & Lineup", "3. Live Match & Subs", "4. Stats Tracker"], 
+    horizontal=True, 
+    label_visibility="collapsed"
+)
 st.write("---")
 
-# SCREEN 1 & 2
-if menu_aktif == "1. Attendance Check":
-    st.markdown("<h3 style='color: #38bdf8; font-size: 18px;'>⚡ Screen 1: Squad Check-In</h3>", unsafe_allow_html=True)
+# SCREEN 1: ATTENDANCE CHECK
+if menu_aktif == "1. Attendance":
+    st.markdown("<h3 style='color: #0284c7; font-size: 20px; font-weight:700;'>⚡ Screen 1: Squad Check-In</h3>", unsafe_allow_html=True)
     col_absen1, col_absen2, col_absen3 = st.columns(3)
     temp_hadir = []
     for i, p in enumerate(st.session_state.daftar_pemain):
@@ -146,10 +189,11 @@ if menu_aktif == "1. Attendance Check":
         with target_col:
             if st.checkbox(p, value=(p in st.session_state.pemain_hadir), key=f"scr1_{p}"): temp_hadir.append(p)
     st.session_state.pemain_hadir = temp_hadir
-    st.info(f"🟢 Total players present: **{len(st.session_state.pemain_hadir)} players**.")
+    st.info(f"🟢 Total players present: {len(st.session_state.pemain_hadir)} players.")
 
-elif menu_aktif == "2. Set GK & Starter":
-    st.markdown("<h3 style='color: #38bdf8; font-size: 18px;'>🧤 Screen 2: Goalkeeper & Starting Lineup Setup</h3>", unsafe_allow_html=True)
+# SCREEN 2: SET GK & STARTER
+elif menu_aktif == "2. Set GK & Lineup":
+    st.markdown("<h3 style='color: #0284c7; font-size: 20px; font-weight:700;'>🧤 Screen 2: Goalkeeper & Starting Lineup Setup</h3>", unsafe_allow_html=True)
     if total_hadir < format_game:
         st.error(f"Not enough players for a {format_game}v{format_game} match!")
     else:
@@ -171,7 +215,7 @@ elif menu_aktif == "2. Set GK & Starter":
             target_col = col_btn1 if i % 3 == 0 else (col_btn2 if i % 3 == 1 else col_btn3)
             with target_col:
                 is_starter = p in st.session_state.pemain_di_lapangan
-                label_tombol = f"🟢 {p} (STARTER)" if is_starter else f"⚪ {p}"
+                label_tombol = f"💪 {p} (STARTER)" if is_starter else f"➕ {p}"
                 if st.button(label_tombol, key=f"btn_choose_{p}"):
                     if is_starter: st.session_state.pemain_di_lapangan.remove(p)
                     else: st.session_state.pemain_di_lapangan.append(p)
@@ -182,11 +226,11 @@ elif menu_aktif == "2. Set GK & Starter":
             if st.session_state.kiper_terpilih != "-- Select Goalkeeper --" and st.session_state.kiper_terpilih not in st.session_state.pemain_di_lapangan:
                 st.error(f"🚨 Main Goalkeeper ({st.session_state.kiper_terpilih}) must be part of the Starting Lineup!")
             else:
-                st.success("💪 Setup complete! Move to Screen 3 for Kick-off.")
+                st.success("✅ Setup complete! Move to Screen 3 for Kick-off.")
 
 # SCREEN 3: LIVE MATCH & SUBS
 elif menu_aktif == "3. Live Match & Subs":
-    st.markdown("<h3 style='color: #38bdf8; font-size: 18px;'>🏃‍♂️ Screen 3: Live Dashboard & Rotation Control</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #0284c7; font-size: 20px; font-weight:700;'>🏃‍♂️ Screen 3: Live Dashboard & Rotation Control</h3>", unsafe_allow_html=True)
     if len(st.session_state.pemain_di_lapangan) != format_game:
         st.error("🚨 Lineup size mismatch! Please set your starting lineup on Screen 2 first.")
     else:
@@ -205,31 +249,31 @@ elif menu_aktif == "3. Live Match & Subs":
                     st.session_state.start_time = time.time()
                     st.session_state.timer_status = "RUNNING"
                     st.rerun()
-            elif st.session_state.timer_status == "RUNNING": st.info("⚽ MATCH LIVE")
+            elif st.session_state.timer_status == "RUNNING": st.success("⚽ MATCH IS LIVE NOW")
 
         with c2:
             if st.session_state.timer_status == "RUNNING":
-                if st.button("⏸️ PAUSE (DEAD BALL)"):
+                if st.button("⏸️ PAUSE MATCH"):
                     st.session_state.elapsed_minutes = current_elapsed
                     st.session_state.timer_status = "PAUSED"
                     st.rerun()
 
-        # LIVE DASHBOARD METRICS (DI SINI UDAH FIXED)
+        # LIVE DASHBOARD METRICS
         st.write("")
         col_m1, col_m2, col_m3 = st.columns(3)
         with col_m1: st.metric("CURRENT MATCH MINUTE", f"Min {current_elapsed:.1f}")
         with col_m2: st.metric("EST. TARGET MINS / PLAYER", f"{menit_per_pemain:.1f} Mins")
         with col_m3: st.metric("FIXED ROTATION ALERT EVERY", f"{float(interval_ideal):.1f} Mins")
 
-        # --- SMART FIXED ROTATION ALERT ---
+        # --- SMART FIXED ROTATION ALERT (HIGH CONTRAST) ---
         if current_elapsed > 0:
             sisa_ke_jendela = current_elapsed % interval_ideal
             if sisa_ke_jendela < 1.0 and current_elapsed < total_menit:
-                st.warning(f"🚨 **ROTATION TIME!** Match hit **{current_elapsed:.1f} mins**. Fixed rotation window (**{interval_ideal:.1f} mins**) reached. Swap bench players now!")
+                st.warning(f"🔔 **ROTATION TIME!** Match reached **{current_elapsed:.1f} mins**. Please swap players below!")
 
         # EMERGENCY GK INJURY PANEL
         if st.session_state.kiper_terpilih != "-- Select Goalkeeper --":
-            with st.expander("🚨 GOALKEEPER INJURY / EMERGENCY GK SUB"):
+            with st.expander("🚨 GOALKEEPER EMERGENCY CHANGE"):
                 kiper_baru = st.selectbox("New Goalkeeper:", options=["-- Select Substitute --"] + [p for p in st.session_state.pemain_hadir if p != st.session_state.kiper_terpilih])
                 ganti_gk_darurat = st.button("🚨 EXECUTE EMERGENCY GK CHANGE")
                 if ganti_gk_darurat and kiper_baru != "-- Select Substitute --":
@@ -237,21 +281,21 @@ elif menu_aktif == "3. Live Match & Subs":
                     if kiper_baru in st.session_state.pemain_di_lapangan: st.session_state.pemain_di_lapangan.remove(kiper_baru)
                     st.session_state.pemain_di_lapangan.remove(st.session_state.kiper_terpilih)
                     st.session_state.pemain_di_lapangan.append(kiper_baru)
-                    st.session_state.log_pergantian.append(f"🚨 **Min {current_elapsed:.1f}** | 🧤 EMERGENCY GK: {kiper_baru} came on for {st.session_state.kiper_terpilih}")
+                    st.session_state.log_pergantian.append(f"🚨 **Min {current_elapsed:.1f}** | 🧤 GK CHANGE: {kiper_baru} for {st.session_state.kiper_terpilih}")
                     st.session_state.kiper_terpilih = kiper_baru
                     st.rerun()
 
         pemain_di_cadangan = [p for p in st.session_state.pemain_hadir if p not in st.session_state.pemain_di_lapangan]
 
-        # Squad Status Box UI
+        # Squad Status Box UI (Outdoor Contrast Fixed)
         st.markdown(f"""
-            <div style='background-color: #1e293b; padding: 12px; border-radius: 12px; border-left: 5px solid #10b981; margin-bottom: 8px;'>
-                <span style='color: #10b981; font-weight: bold; font-size: 11px;'>🟢 ON THE FIELD ({len(st.session_state.pemain_di_lapangan)})</span><br>
-                <span style='font-size: 14px; font-weight: 600; color: #f1f5f9;'>{", ".join(st.session_state.pemain_di_lapangan)}</span>
+            <div class='field-status-box'>
+                <span style='color: #16a34a; font-weight: bold; font-size: 13px;'>🟢 ACTIVE ON FIELD ({len(st.session_state.pemain_di_lapangan)})</span><br>
+                <span style='font-size: 16px; font-weight: 700; color: #000000;'>{", ".join(st.session_state.pemain_di_lapangan)}</span>
             </div>
-            <div style='background-color: #1e293b; padding: 12px; border-radius: 12px; border-left: 5px solid #ef4444; margin-bottom: 15px;'>
-                <span style='color: #ef4444; font-weight: bold; font-size: 11px;'>🔴 ON THE BENCH ({len(pemain_di_cadangan)})</span><br>
-                <span style='font-size: 14px; font-weight: 600; color: #cbd5e1;'>{", ".join(pemain_di_cadangan) if pemain_di_cadangan else "None"}</span>
+            <div class='bench-status-box'>
+                <span style='color: #dc2626; font-weight: bold; font-size: 13px;'>🔴 ON THE BENCH ({len(pemain_di_cadangan)})</span><br>
+                <span style='font-size: 16px; font-weight: 700; color: #000000;'>{", ".join(pemain_di_cadangan) if pemain_di_cadangan else "None"}</span>
             </div>
         """, unsafe_allow_html=True)
 
@@ -275,47 +319,52 @@ elif menu_aktif == "3. Live Match & Subs":
                     st.rerun()
                 else: st.error("🚨 Substitution mismatch!")
 
-        # PROGRESS VISUAL MONITOR WITH INTELLIGENT HIGHLIGHT
-        st.write("---")
-        st.markdown("**📊 Live Player Minutes Tracker**")
+# SCREEN 4: MINUTE TRACKER WITH OUTDOOR HIGHLIGHTS
+elif menu_aktif == "4. Stats Tracker":
+    st.markdown("<h3 style='color: #0284c7; font-size: 20px; font-weight:700;'>📊 Screen 4: Player Minutes Tracker & Logs</h3>", unsafe_allow_html=True)
+    
+    st.info(f"⏱️ **Match Progress:** Min {current_elapsed:.1f} / Alert Window Every {float(interval_ideal):.1f} Mins.")
+    st.write("")
+    st.markdown("**📉 Live Player Minutes Breakdown (Thick Fonts for Sun Glare):**")
+    
+    outfield_players = [p for p in st.session_state.pemain_hadir if p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper]
+    if outfield_players:
+        rata_menit_skuad = sum(st.session_state.menit_bermain[p] for p in outfield_players) / len(outfield_players)
+    else:
+        rata_menit_skuad = 0.0
+
+    for p in st.session_state.pemain_hadir:
+        menit_sekarang = st.session_state.menit_bermain[p]
+        persentase_main = min(menit_sekarang / total_menit, 1.0)
+        status_badge = "🧤 GK" if p == st.session_state.kiper_terpilih else ("🟢 Active" if p in st.session_state.pemain_di_lapangan else "🔴 Bench")
         
-        outfield_players = [p for p in st.session_state.pemain_hadir if p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper]
-        if outfield_players:
-            rata_menit_skuad = sum(st.session_state.menit_bermain[p] for p in outfield_players) / len(outfield_players)
-        else:
-            rata_menit_skuad = 0.0
+        is_low_time = p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper and menit_sekarang < rata_menit_skuad and current_elapsed > 5.0
+        
+        box_class = "low-time-box" if is_low_time else "normal-time-box"
+        alert_badge = " <span style='background-color:#ef4444; color:white; padding:4px 8px; font-size:11px; font-weight:700; border-radius:4px; margin-left:5px;'>⚠️ LOW TIME</span>" if is_low_time else ""
+        
+        st.markdown(f"<div class='{box_class}'>", unsafe_allow_html=True)
+        col_pname, col_pbar = st.columns([1.4, 3])
+        with col_pname:
+            st.markdown(f"<span style='font-size:16px; font-weight:700; color:#000000;'>{p}</span>{alert_badge}<br><span style='color:#475569; font-size:12px; font-weight:700;'>{status_badge}</span>", unsafe_allow_html=True)
+        with col_pbar:
+            st.progress(persentase_main, text=f"{menit_sekarang:.1f}m / target {menit_per_pemain:.1f}m")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        for p in st.session_state.pemain_hadir:
-            menit_sekarang = st.session_state.menit_bermain[p]
-            persentase_main = min(menit_sekarang / total_menit, 1.0)
-            status_badge = "🧤 GK" if p == st.session_state.kiper_terpilih else ("🟢 Active" if p in st.session_state.pemain_di_lapangan else "🔴 Bench")
+    # MATCH HISTORY LOG
+    if st.session_state.log_pergantian:
+        st.write("---")
+        st.markdown("**📝 Match Timeline & Logs**")
+        for log in reversed(st.session_state.log_pergantian):
+            st.markdown(f"<div style='background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; margin-bottom: 5px; font-size: 14px; color:#000000; font-weight:600;'>{log}</div>", unsafe_allow_html=True)
             
-            is_low_time = p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper and menit_sekarang < rata_menit_skuad and current_elapsed > 5.0
-            
-            box_class = "low-time-box" if is_low_time else "normal-time-box"
-            alert_badge = " <span style='background-color:#ef4444; color:white; padding:2px 6px; font-size:10px; font-weight:700; border-radius:4px; margin-left:5px;'>⚠️ LOW TIME</span>" if is_low_time else ""
-            
-            st.markdown(f"<div class='{box_class}'>", unsafe_allow_html=True)
-            col_pname, col_pbar = st.columns([1.2, 3])
-            with col_pname:
-                st.markdown(f"**{p}**{alert_badge}<br><span style='color:#94a3b8; font-size:11px;'>{status_badge}</span>", unsafe_allow_html=True)
-            with col_pbar:
-                st.progress(persentase_main, text=f"{menit_sekarang:.1f} mins / target {menit_per_pemain:.1f} mins")
-            st.markdown("</div>", unsafe_allow_html=True)
-
-        # MATCH HISTORY LOG
-        if st.session_state.log_pergantian:
-            st.write("---")
-            st.markdown("**📝 Match Timeline & Logs**")
-            for log in reversed(st.session_state.log_pergantian):
-                st.markdown(f"<div style='background-color: #1e293b; padding: 10px; border-radius: 8px; margin-bottom: 5px; font-size: 13px;'>{log}</div>", unsafe_allow_html=True)
-            if st.button("🗑️ Reset Entire Match"):
-                st.session_state.log_pergantian = []
-                st.session_state.menit_bermain = {p: 0.0 for p in st.session_state.daftar_pemain}
-                st.session_state.elapsed_minutes = 0.0
-                st.session_state.last_calculated_minute = 0.0
-                st.session_state.riwayat_kiper = []
-                st.session_state.pemain_di_lapangan = []
-                st.session_state.kiper_terpilih = "-- Select Goalkeeper --"
-                st.session_state.timer_status = "STOPPED"
-                st.rerun()
+        if st.button("🗑️ Reset Entire Match"):
+            st.session_state.log_pergantian = []
+            st.session_state.menit_bermain = {p: 0.0 for p in st.session_state.daftar_pemain}
+            st.session_state.elapsed_minutes = 0.0
+            st.session_state.last_calculated_minute = 0.0
+            st.session_state.riwayat_kiper = []
+            st.session_state.pemain_di_lapangan = []
+            st.session_state.kiper_terpilih = "-- Select Goalkeeper --"
+            st.session_state.timer_status = "STOPPED"
+            st.rerun()
