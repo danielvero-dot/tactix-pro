@@ -4,101 +4,104 @@ from streamlit_autorefresh import st_autorefresh
 
 # 1. SET CONFIG & HIGH-CONTRAST OUTDOOR THEME
 st.set_page_config(
-    page_title="Tactix Pro - Outdoor Edition", 
+    page_title="Tactix Pro - High Contrast", 
     layout="wide", 
     initial_sidebar_state="collapsed"
 )
 
-# Injeksi CSS Khusus High-Contrast Light Mode untuk Outdoor
+# Injeksi CSS Khusus Outdoor: Roboto Condensed, Navy Blue & Racing Orange
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
     
     /* Paksa Background Putih Bersih & Teks Hitam Pekat */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
         background-color: #ffffff !important;
         color: #000000 !important;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+        font-family: 'Roboto Condensed', sans-serif !important;
     }
     
-    /* Navigasi Atas: Gede, Hitam Kontras Tinggi */
+    /* Navigasi Atas: Biru Navy, Teks Putih Tegas Gede */
     div[data-testid="stHorizontalBlock"] button {
-        background-color: #f1f5f9 !important;
-        color: #000000 !important;
-        border: 2px solid #000000 !important;
-        padding: 12px 5px !important;
-        font-size: 14px !important;
+        background-color: #1e3a8a !important;
+        color: #ffffff !important;
+        border: 2px solid #111827 !important;
+        padding: 14px 5px !important;
+        font-size: 15px !important;
         font-weight: 700 !important;
         border-radius: 10px !important;
+        text-transform: uppercase;
     }
     
-    /* Widget Metrik: Kotak Terang Border Hitam Lembut */
+    /* Widget Metrik: Border Oranye Balap Tajam */
     div[data-testid="stMetric"] {
         background-color: #f8fafc !important;
-        border: 2px solid #cbd5e1 !important;
+        border: 3px solid #f97316 !important;
         padding: 15px;
         border-radius: 14px;
     }
     div[data-testid="stMetricLabel"] { 
-        color: #475569 !important; 
-        font-size: 14px !important; 
+        color: #1e293b !important; 
+        font-size: 15px !important; 
         font-weight: 700 !important; 
+        text-transform: uppercase;
     }
     div[data-testid="stMetricValue"] { 
-        color: #0284c7 !important; 
-        font-size: 32px !important; 
+        color: #1e3a8a !important; 
+        font-size: 36px !important; 
         font-weight: 700 !important; 
     }
     
-    /* Tombol Utama: Biru Pekat Teks Putih Bold */
+    /* Tombol Utama: Biru Navy Solid Teks Putih Gede Banget */
     div.stButton > button {
-        background: #0284c7 !important;
+        background: #1e3a8a !important;
         color: #ffffff !important; 
-        border: 2px solid #0369a1 !important;
-        padding: 14px 24px !important;
-        font-size: 16px !important;
+        border: 3px solid #111827 !important;
+        padding: 16px 24px !important;
+        font-size: 18px !important;
         font-weight: 700 !important; 
         border-radius: 12px !important; 
         width: 100% !important;
+        text-transform: uppercase;
     }
     
-    /* Dropdown Multiselect & Checkbox Teks Hitam Gede */
+    /* Form & Input Label */
     label, p, span {
         color: #000000 !important;
-        font-weight: 600 !important;
-        font-size: 15px !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
     }
     
-    /* Kotak Highlight Low Time: Merah Kontras Tinggi */
+    /* Kotak Highlight Low Time: Border Merah Gila-Gilaan */
     .low-time-box {
         background-color: #fef2f2 !important; 
-        border: 3px solid #ef4444 !important; 
-        padding: 12px; 
+        border: 4px solid #dc2626 !important; 
+        padding: 14px; 
         border-radius: 10px; 
-        margin-bottom: 10px;
+        margin-bottom: 12px;
     }
     .normal-time-box {
         background-color: #ffffff !important;
-        border: 1px solid #e2e8f0 !important;
-        padding: 12px;
+        border: 2px solid #1e3a8a !important;
+        padding: 14px;
         border-radius: 10px;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
     }
     
     /* Status Box Lapangan vs Cadangan */
     .field-status-box {
         background-color: #f0fdf4 !important;
-        border: 2px solid #16a34a !important;
-        padding: 12px;
+        border: 3px solid #16a34a !important;
+        padding: 14px;
         border-radius: 10px;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
     }
     .bench-status-box {
-        background-color: #fcfcfc !important;
-        border: 2px solid #dc2626 !important;
-        padding: 12px;
+        background-color: #fff7ed !important;
+        border: 3px solid #f97316 !important; /* Oranye untuk Cadangan */
+        padding: 14px;
         border-radius: 10px;
-        margin-bottom: 15px;
+        margin-bottom: 18px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -169,8 +172,8 @@ if st.session_state.timer_status == "RUNNING":
 else:
     current_elapsed = st.session_state.elapsed_minutes
 
-# --- 5. INTERFACE NAVIGASI (4 SCREENS OUTDOOR OPTIMIZED) ---
-st.markdown("<h2 style='text-align: center; color: #000000; font-size: 24px; font-weight:700; margin-bottom: 5px;'>📋 TACTIX PRO</h2>", unsafe_allow_html=True)
+# --- 5. INTERFACE NAVIGASI (4 SCREENS) ---
+st.markdown("<h2 style='text-align: center; color: #000000; font-size: 26px; font-weight:700; margin-bottom: 5px;'>📋 TACTIX PRO</h2>", unsafe_allow_html=True)
 menu_aktif = st.radio(
     "Navigation", 
     ["1. Attendance", "2. Set GK & Lineup", "3. Live Match & Subs", "4. Stats Tracker"], 
@@ -181,7 +184,7 @@ st.write("---")
 
 # SCREEN 1: ATTENDANCE CHECK
 if menu_aktif == "1. Attendance":
-    st.markdown("<h3 style='color: #0284c7; font-size: 20px; font-weight:700;'>⚡ Screen 1: Squad Check-In</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>⚡ Screen 1: Squad Check-In</h3>", unsafe_allow_html=True)
     col_absen1, col_absen2, col_absen3 = st.columns(3)
     temp_hadir = []
     for i, p in enumerate(st.session_state.daftar_pemain):
@@ -193,7 +196,7 @@ if menu_aktif == "1. Attendance":
 
 # SCREEN 2: SET GK & STARTER
 elif menu_aktif == "2. Set GK & Lineup":
-    st.markdown("<h3 style='color: #0284c7; font-size: 20px; font-weight:700;'>🧤 Screen 2: Goalkeeper & Starting Lineup Setup</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>🧤 Screen 2: Goalkeeper & Starting Lineup Setup</h3>", unsafe_allow_html=True)
     if total_hadir < format_game:
         st.error(f"Not enough players for a {format_game}v{format_game} match!")
     else:
@@ -230,7 +233,7 @@ elif menu_aktif == "2. Set GK & Lineup":
 
 # SCREEN 3: LIVE MATCH & SUBS
 elif menu_aktif == "3. Live Match & Subs":
-    st.markdown("<h3 style='color: #0284c7; font-size: 20px; font-weight:700;'>🏃‍♂️ Screen 3: Live Dashboard & Rotation Control</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>🏃‍♂️ Screen 3: Live Dashboard & Rotation Control</h3>", unsafe_allow_html=True)
     if len(st.session_state.pemain_di_lapangan) != format_game:
         st.error("🚨 Lineup size mismatch! Please set your starting lineup on Screen 2 first.")
     else:
@@ -265,7 +268,7 @@ elif menu_aktif == "3. Live Match & Subs":
         with col_m2: st.metric("EST. TARGET MINS / PLAYER", f"{menit_per_pemain:.1f} Mins")
         with col_m3: st.metric("FIXED ROTATION ALERT EVERY", f"{float(interval_ideal):.1f} Mins")
 
-        # --- SMART FIXED ROTATION ALERT (HIGH CONTRAST) ---
+        # --- SMART FIXED ROTATION ALERT ---
         if current_elapsed > 0:
             sisa_ke_jendela = current_elapsed % interval_ideal
             if sisa_ke_jendela < 1.0 and current_elapsed < total_menit:
@@ -287,15 +290,15 @@ elif menu_aktif == "3. Live Match & Subs":
 
         pemain_di_cadangan = [p for p in st.session_state.pemain_hadir if p not in st.session_state.pemain_di_lapangan]
 
-        # Squad Status Box UI (Outdoor Contrast Fixed)
+        # Squad Status Box UI (Navy and Orange Border Elements)
         st.markdown(f"""
             <div class='field-status-box'>
-                <span style='color: #16a34a; font-weight: bold; font-size: 13px;'>🟢 ACTIVE ON FIELD ({len(st.session_state.pemain_di_lapangan)})</span><br>
-                <span style='font-size: 16px; font-weight: 700; color: #000000;'>{", ".join(st.session_state.pemain_di_lapangan)}</span>
+                <span style='color: #16a34a; font-weight: bold; font-size: 14px;'>🟢 ACTIVE ON FIELD ({len(st.session_state.pemain_di_lapangan)})</span><br>
+                <span style='font-size: 18px; font-weight: 700; color: #000000;'>{", ".join(st.session_state.pemain_di_lapangan)}</span>
             </div>
             <div class='bench-status-box'>
-                <span style='color: #dc2626; font-weight: bold; font-size: 13px;'>🔴 ON THE BENCH ({len(pemain_di_cadangan)})</span><br>
-                <span style='font-size: 16px; font-weight: 700; color: #000000;'>{", ".join(pemain_di_cadangan) if pemain_di_cadangan else "None"}</span>
+                <span style='color: #f97316; font-weight: bold; font-size: 14px;'>🔴 ON THE BENCH ({len(pemain_di_cadangan)})</span><br>
+                <span style='font-size: 18px; font-weight: 700; color: #000000;'>{", ".join(pemain_di_cadangan) if pemain_di_cadangan else "None"}</span>
             </div>
         """, unsafe_allow_html=True)
 
@@ -319,13 +322,13 @@ elif menu_aktif == "3. Live Match & Subs":
                     st.rerun()
                 else: st.error("🚨 Substitution mismatch!")
 
-# SCREEN 4: MINUTE TRACKER WITH OUTDOOR HIGHLIGHTS
+# SCREEN 4: MINUTE TRACKER (ROBOTO CONDENSED EXTRA BOLD)
 elif menu_aktif == "4. Stats Tracker":
-    st.markdown("<h3 style='color: #0284c7; font-size: 20px; font-weight:700;'>📊 Screen 4: Player Minutes Tracker & Logs</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>📊 Screen 4: Player Minutes Tracker & Logs</h3>", unsafe_allow_html=True)
     
     st.info(f"⏱️ **Match Progress:** Min {current_elapsed:.1f} / Alert Window Every {float(interval_ideal):.1f} Mins.")
     st.write("")
-    st.markdown("**📉 Live Player Minutes Breakdown (Thick Fonts for Sun Glare):**")
+    st.markdown("**📉 Live Player Minutes Breakdown (Roboto Condensed - High Contrast):**")
     
     outfield_players = [p for p in st.session_state.pemain_hadir if p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper]
     if outfield_players:
@@ -341,12 +344,12 @@ elif menu_aktif == "4. Stats Tracker":
         is_low_time = p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper and menit_sekarang < rata_menit_skuad and current_elapsed > 5.0
         
         box_class = "low-time-box" if is_low_time else "normal-time-box"
-        alert_badge = " <span style='background-color:#ef4444; color:white; padding:4px 8px; font-size:11px; font-weight:700; border-radius:4px; margin-left:5px;'>⚠️ LOW TIME</span>" if is_low_time else ""
+        alert_badge = " <span style='background-color:#dc2626; color:white; padding:4px 8px; font-size:12px; font-weight:700; border-radius:4px; margin-left:5px;'>⚠️ LOW TIME</span>" if is_low_time else ""
         
         st.markdown(f"<div class='{box_class}'>", unsafe_allow_html=True)
-        col_pname, col_pbar = st.columns([1.4, 3])
+        col_pname, col_pbar = st.columns([1.5, 3])
         with col_pname:
-            st.markdown(f"<span style='font-size:16px; font-weight:700; color:#000000;'>{p}</span>{alert_badge}<br><span style='color:#475569; font-size:12px; font-weight:700;'>{status_badge}</span>", unsafe_allow_html=True)
+            st.markdown(f"<span style='font-size:18px; font-weight:700; color:#000000; text-transform:uppercase;'>{p}</span>{alert_badge}<br><span style='color:#475569; font-size:13px; font-weight:700;'>{status_badge}</span>", unsafe_allow_html=True)
         with col_pbar:
             st.progress(persentase_main, text=f"{menit_sekarang:.1f}m / target {menit_per_pemain:.1f}m")
         st.markdown("</div>", unsafe_allow_html=True)
@@ -356,7 +359,7 @@ elif menu_aktif == "4. Stats Tracker":
         st.write("---")
         st.markdown("**📝 Match Timeline & Logs**")
         for log in reversed(st.session_state.log_pergantian):
-            st.markdown(f"<div style='background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; margin-bottom: 5px; font-size: 14px; color:#000000; font-weight:600;'>{log}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='background-color: #f1f5f9; border: 2px solid #1e3a8a; padding: 10px; border-radius: 8px; margin-bottom: 5px; font-size: 15px; color:#000000; font-weight:700;'>{log}</div>", unsafe_allow_html=True)
             
         if st.button("🗑️ Reset Entire Match"):
             st.session_state.log_pergantian = []
