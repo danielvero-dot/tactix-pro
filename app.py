@@ -9,19 +9,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Injeksi CSS Total: Roboto Condensed, Navigasi Navy-Putih, Teks Putih Mutlak di Area Gelap
+# Injeksi CSS Total: Roboto Condensed, Navigasi Navy-Putih, Paksa Teks Putih di Semua Tombol & Blok Gelap
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
     
-    /* 1. PAKSA BACKGROUND APLIKASI PUTIH BERSIH GLOBAL */
+    /* 1. BACKGROUND APLIKASI PUTIH BERSIH GLOBAL */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"], [data-testid="stMainBlockContainer"] {
         background-color: #ffffff !important;
         color: #000000 !important;
         font-family: 'Roboto Condensed', sans-serif !important;
     }
     
-    /* 2. DESIGN HEADER PREMIUM (PUTIH BERSIH - AKSEN NAVY ORANGE KONTRAS TEGAS) */
+    /* 2. DESIGN HEADER PREMIUM PUTIH - NAVY ORANGE */
     .premium-header {
         background-color: #ffffff !important;
         padding: 15px 10px;
@@ -82,7 +82,7 @@ st.markdown("""
         font-weight: 700 !important; 
     }
     
-    /* 5. TOMBOL KONTROL UTAMA: NAVY BLUE, TEKS PUTIH */
+    /* 5. KUNCI TOTAL SEMUA TOMBOL (HALAMAN 2 & HALAMAN 3): BACKGROUND NAVY, TEKS WAJIB PUTIH MUTLAK! */
     div.stButton > button {
         background-color: #1e3a8a !important;
         color: #ffffff !important; 
@@ -95,14 +95,29 @@ st.markdown("""
         text-transform: uppercase;
     }
     
-    /* 6. SETELAN TEKS FORM BAWAAN AGAR HITAM PEKAT */
+    /* Berantas bug Streamlit yang memaksa tulisan di dalam button jadi hitam */
+    div.stButton > button p, div.stButton > button span, div.stButton > button data {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Efek hover biar makin responsif */
+    div.stButton > button:hover {
+        background-color: #f97316 !important;
+        border-color: #f97316 !important;
+    }
+    div.stButton > button:hover p, div.stButton > button:hover span {
+        color: #ffffff !important;
+    }
+    
+    /* 6. SETELAN TEKS FORM BAWAAN (LABEL / DESKRIPSI) AGAR HITAM PEKAT */
     label, p {
         color: #000000 !important;
         font-weight: 700 !important;
         font-size: 16px !important;
     }
     
-    /* 7. KOTAK SQUAD LIVE (NAVY & DARK SLATE, TEKS WAJIB PUTIH MUTLAK!) */
+    /* 7. KOTAK SQUAD LIVE DI HALAMAN 3 (NAVY & DARK SLATE, TEKS PUTIH MUTLAK) */
     .field-status-box {
         background-color: #1e3a8a !important;
         border-bottom: 5px solid #16a34a !important;
@@ -120,8 +135,7 @@ st.markdown("""
         text-align: center;
     }
     
-    /* Paksa teks nama starter/cadangan di dalam kotak ini berwarna putih pekat */
-    .field-status-box span, .field-status-box p, .bench-status-box span, .bench-status-box p {
+    .field-status-box p, .bench-status-box p {
         color: #ffffff !important;
         font-weight: 700 !important;
     }
@@ -218,7 +232,7 @@ if st.session_state.timer_status == "RUNNING":
 else:
     current_elapsed = st.session_state.elapsed_minutes
 
-# --- 5. INTERFACE NAVIGASI (4 SCREENS) ---
+# --- 5. INTERFACE NAVIGASI ---
 menu_aktif = st.radio(
     "Navigation", 
     ["1. Attendance", "2. Set GK & Lineup", "3. Live Match & Subs", "4. Stats Tracker"], 
@@ -239,7 +253,7 @@ if menu_aktif == "1. Attendance":
     st.session_state.pemain_hadir = temp_hadir
     st.info(f"🟢 Total players present: {len(st.session_state.pemain_hadir)} players.")
 
-# SCREEN 2: SET GK & STARTER
+# SCREEN 2: SET GK & STARTER (NAMA PEMAIN FIX PUTIH MUTLAK)
 elif menu_aktif == "2. Set GK & Lineup":
     st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>🧤 Screen 2: Goalkeeper & Starting Lineup Setup</h3>", unsafe_allow_html=True)
     if total_hadir < format_game:
@@ -276,7 +290,7 @@ elif menu_aktif == "2. Set GK & Lineup":
             else:
                 st.success("✅ Setup complete! Move to Screen 3 for Kick-off.")
 
-# SCREEN 3: LIVE MATCH & SUBS
+# SCREEN 3: LIVE MATCH & SUBS (BUTTON START/PAUSE/SUB FIX PUTIH MUTLAK)
 elif menu_aktif == "3. Live Match & Subs":
     st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>🏃‍♂️ Screen 3: Live Dashboard & Rotation Control</h3>", unsafe_allow_html=True)
     if len(st.session_state.pemain_di_lapangan) != format_game:
@@ -335,7 +349,7 @@ elif menu_aktif == "3. Live Match & Subs":
 
         pemain_di_cadangan = [p for p in st.session_state.pemain_hadir if p not in st.session_state.pemain_di_lapangan]
 
-        # SQUAD STATUS BOX (KUNCI KEDUA WARNA TEKS JADI PUTIH BERSIH)
+        # SQUAD STATUS BOX
         st.markdown(f"""
             <div class='field-status-box'>
                 <p style='color: #4ade80 !important; font-size: 15px; margin:0px; font-weight:700;'>🟢 ON THE FIELD ({len(st.session_state.pemain_di_lapangan)})</p>
