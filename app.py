@@ -95,13 +95,11 @@ st.markdown("""
         text-transform: uppercase;
     }
     
-    /* Paksa semua elemen teks di dalam button berwarna putih pekat */
     div.stButton > button * {
         color: #ffffff !important;
         font-weight: 700 !important;
     }
     
-    /* Efek hover biar responsif pas ditekan */
     div.stButton > button:hover {
         background-color: #f97316 !important;
         border-color: #f97316 !important;
@@ -253,7 +251,7 @@ if menu_aktif == "1. Attendance":
     st.session_state.pemain_hadir = temp_hadir
     st.info(f"🟢 Total players present: {len(st.session_state.pemain_hadir)} players.")
 
-# SCREEN 2: SET GK & STARTER (TANDA PLUS DIHAPUS TOTAL)
+# SCREEN 2: SET GK & STARTER
 elif menu_aktif == "2. Set GK & Lineup":
     st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>🧤 Screen 2: Goalkeeper & Starting Lineup Setup</h3>", unsafe_allow_html=True)
     if total_hadir < format_game:
@@ -277,7 +275,6 @@ elif menu_aktif == "2. Set GK & Lineup":
             target_col = col_btn1 if i % 3 == 0 else (col_btn2 if i % 3 == 1 else col_btn3)
             with target_col:
                 is_starter = p in st.session_state.pemain_di_lapangan
-                # Gak pake tanda + lagi, teks bersih anti bug hitam
                 label_tombol = f"💪 {p} (STARTER)" if is_starter else f"{p}"
                 if st.button(label_tombol, key=f"btn_choose_{p}"):
                     if is_starter: st.session_state.pemain_di_lapangan.remove(p)
@@ -382,13 +379,13 @@ elif menu_aktif == "3. Live Match & Subs":
                     st.rerun()
                 else: st.error("🚨 Substitution mismatch!")
 
-# SCREEN 4: MINUTE TRACKER
+# SCREEN 4: MINUTE TRACKER DENGAN INTEGRATED DOUBLE SORTING ALGORITHM
 elif menu_aktif == "4. Stats Tracker":
     st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>📊 Screen 4: Player Minutes Tracker & Logs</h3>", unsafe_allow_html=True)
     
     st.info(f"⏱️ **Match Progress:** Min {current_elapsed:.1f} / Alert Window Every {float(interval_ideal):.1f} Mins.")
     st.write("")
-    st.markdown("**📉 Live Player Minutes Breakdown (High Contrast):**")
+    st.markdown("**📉 Smart Player Minutes Breakdown (Prioritized Urutan):**")
     
     outfield_players = [p for p in st.session_state.pemain_hadir if p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper]
     if outfield_players:
@@ -396,12 +393,32 @@ elif menu_aktif == "4. Stats Tracker":
     else:
         rata_menit_skuad = 0.0
 
+    # --- LOGIKA SORTING PINTAR BARU ---
+    list_low_time = []
+    list_normal_time = []
+
     for p in st.session_state.pemain_hadir:
         menit_sekarang = st.session_state.menit_bermain[p]
+        is_low = p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper and menit_sekarang < rata_menit_skuad and current_elapsed > 5.0
+        
+        if is_low:
+            list_low_time.append((p, menit_sekarang, True))
+        else:
+            list_normal_time.append((p, menit_sekarang, False))
+
+    # Kelompok 1 (Low Time): Diurutkan dari yang menitnya paling kecil/sedikit ke besar
+    list_low_time.sort(key=lambda x: x[1])
+    
+    # Kelompok 2 (Normal): Diurutkan dari yang paling lama bermain (menit besar) ke kecil
+    list_normal_time.sort(key=lambda x: x[1], reverse=True)
+
+    # Gabung total daftar: Kelompok Low Time mutlak nangkring di paling atas!
+    daftar_final_urut = list_low_time + list_normal_time
+
+    # Render Hasil Sorting ke HP Lu
+    for p, menit_sekarang, is_low_time in daftar_final_urut:
         persentase_main = min(menit_sekarang / total_menit, 1.0)
         status_badge = "🧤 GK" if p == st.session_state.kiper_terpilih else ("🟢 Active" if p in st.session_state.pemain_di_lapangan else "🔴 Bench")
-        
-        is_low_time = p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper and menit_sekarang < rata_menit_skuad and current_elapsed > 5.0
         
         box_class = "low-time-box" if is_low_time else "normal-time-box"
         alert_badge = " <span style='background-color:#dc2626; color:white; padding:4px 8px; font-size:12px; font-weight:700; border-radius:4px; margin-left:5px;'>⚠️ LOW TIME</span>" if is_low_time else ""
