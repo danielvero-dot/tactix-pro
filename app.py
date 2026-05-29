@@ -9,7 +9,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Injeksi CSS Total: Roboto Condensed, Paksa Angka Metrik Raksasa, Urutan Urgensi Fix
+# Injeksi CSS Total: Roboto Condensed, Angka Metrik Raksasa, Urutan Urgensi Fix
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
@@ -62,7 +62,7 @@ st.markdown("""
         text-transform: uppercase;
     }
     
-    /* 4. WIDGET METRIK: PAKSA ANGKA RAKSASA TEMBUS SHADOW DOM */
+    /* 4. WIDGET METRIK: ANGKA RAKSASA ORANYE PEKAT */
     div[data-testid="stMetric"] {
         background-color: #ffffff !important;
         border: 3px solid #1e3a8a !important;
@@ -76,10 +76,9 @@ st.markdown("""
         font-weight: 700 !important; 
         text-transform: uppercase !important;
     }
-    /* Trik khusus menjebol font value Streamlit */
     div[data-testid="stMetricValue"], div[data-testid="stMetricValue"] > div, div[data-testid="stMetricValue"] span { 
         color: #f97316 !important; 
-        font-size: 54px !important; /* Dongkrak gila-gilaan ke 54px */
+        font-size: 54px !important; 
         font-weight: 700 !important; 
         line-height: 1.1 !important;
     }
@@ -100,11 +99,6 @@ st.markdown("""
     div.stButton > button * {
         color: #ffffff !important;
         font-weight: 700 !important;
-    }
-    
-    div.stButton > button:hover {
-        background-color: #f97316 !important;
-        border-color: #f97316 !important;
     }
     
     /* 6. SETELAN TEKS FORM BAWAAN AGAR HITAM PEKAT */
@@ -378,13 +372,13 @@ elif menu_aktif == "3. Live Match & Subs":
                     st.rerun()
                 else: st.error("🚨 Substitution mismatch!")
 
-# SCREEN 4: MINUTE TRACKER DENGAN FIXED ABSOLUTE TOP UNTUK LOW TIME
+# SCREEN 4: MINUTE TRACKER (SORTING UTK TOTAL MENIT TERKECIL -> TERBESAR)
 elif menu_aktif == "4. Stats Tracker":
     st.markdown("<h3 style='color: #1e3a8a; font-size: 22px; font-weight:700;'>📊 Screen 4: Player Minutes Tracker & Logs</h3>", unsafe_allow_html=True)
     
     st.info(f"⏱️ **Match Progress:** Min {current_elapsed:.1f} / Alert Window Every {float(interval_ideal):.1f} Mins.")
     st.write("")
-    st.markdown("**📉 Smart Player Minutes Breakdown (Low Time Locked on TOP):**")
+    st.markdown("**📉 Live Player Minutes Breakdown (Sorted: Fewest Mins to Most Mins):**")
     
     outfield_players = [p for p in st.session_state.pemain_hadir if p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper]
     if outfield_players:
@@ -392,31 +386,20 @@ elif menu_aktif == "4. Stats Tracker":
     else:
         rata_menit_skuad = 0.0
 
-    # PENGURUTAN ULANG MUTLAK KELOMPOK
-    list_low_time = []
-    list_normal_time = []
-
+    # --- LOGIKA SANGAT SIMPEL & MUTLAK DI SINI ---
+    # Masukkan seluruh data pemain ke dalam list penampung sementara
+    daftar_urut_menit = []
     for p in st.session_state.pemain_hadir:
         menit_sekarang = st.session_state.menit_bermain[p]
-        # HAPUS ATURAN > 5.0 MINS BIAR GAK ACAK PAS AWAL MATCH KICKOFF!
-        is_low = p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper and menit_sekarang < rata_menit_skuad
-        
-        if is_low:
-            list_low_time.append((p, menit_sekarang, True))
-        else:
-            list_normal_time.append((p, menit_sekarang, False))
+        is_low_time = p != st.session_state.kiper_terpilih and p not in st.session_state.riwayat_kiper and menit_sekarang < rata_menit_skuad
+        daftar_urut_menit.append((p, menit_sekarang, is_low_time))
 
-    # KUNCI URUTAN: Low Time diurut dari paling kecil menit bermainnya
-    list_low_time.sort(key=lambda x: x[1])
-    
-    # Sisa skuad normal diurut dari yang paling kenyang bermain ke kecil
-    list_normal_time.sort(key=lambda x: x[1], reverse=True)
+    # SORTING MUTLAK: Urutkan dari angka menit bermain yang PALING KECIL (sedikit) ke BESAR (banyak)
+    # Parameter reverse=False (Default) mengunci nilai terkecil selalu berada di puncak nomor satu
+    daftar_urut_menit.sort(key=lambda x: x[1])
 
-    # GABUNGAN AKHIR MUTLAK: Low time nangkring nomor satu paling atas
-    daftar_final_urut = list_low_time + list_normal_time
-
-    # Render List
-    for p, menit_sekarang, is_low_time in daftar_final_urut:
+    # Render List Sesuai Urutan Baru
+    for p, menit_sekarang, is_low_time in daftar_urut_menit:
         persentase_main = min(menit_sekarang / total_menit, 1.0)
         status_badge = "🧤 GK" if p == st.session_state.kiper_terpilih else ("🟢 Active" if p in st.session_state.pemain_di_lapangan else "🔴 Bench")
         
